@@ -135,15 +135,6 @@ def auto_apply(user_first ,password_first, user_second, password_second):
     er_df.to_csv(r"C:\Users\Aditya\Desktop\Naukri\Auto Recommend\error1.csv",index=False)
 
 
-user1 = 'a.mulay9501@gmail.com'
-password1 = 'Aditya@2201'
-
-user2 = 'adi221800@gmail.com'
-password2 = '5zJV!&zCSw6pGdA'
-
-print(auto_apply(user_first=user2,password_first=password2, user_second=user2,password_second=password2))
-
-
 def get_job_without_login(jobdesgn,yrsexp,fresh):
     driver = webdriver.Chrome()
     driver.get(main_url)
@@ -247,6 +238,3 @@ def search_apply(userid,secure,jobdesgn,yrsexp,fresh):
             try_something.append(joburl)
     print(len(try_something))
     return try_something
-    
-# print(search_apply(user2,password2,'Machine Learning',4,'recent'))
-            
