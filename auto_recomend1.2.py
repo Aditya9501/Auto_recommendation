@@ -36,24 +36,36 @@ def extract_recommended_links(user,password):
     wait.until(EC.element_to_be_clickable((By.XPATH,"//li[@class='nI-gNb-custom-Jobs nI-gNb-menuItems']"))).click()
     wait.until(EC.element_to_be_clickable((By.XPATH,"//a[@href='/mnjuser/recommendedjobs']//div[contains(text(),'Recommended jobs')]"))).click()
 
-    # wait.until(EC.visibility_of_all_elements_located((By.XPATH,"//div/article")))
+    keyword_title = ["Data Analyst", "Data Scientist","Python","Machine Learning","Artificial Intelligence", "Data Science","Visusalization",
+                    "Deep Learning","Natural Language","Computer Vision","Data Mining","Power BI", "Tableau","Data Analysis","Data Modeling",
+                    "Data Wrangling","Business Analyst"]
+    keyword_title2 = ["ML", "AI", "CV", "NLP","SQL"]
+    not_keywords = ["Developer","Django","Stack","Config","Server","Admin","Associate","Content"]
 
     ls = driver.find_elements(By.XPATH,"//div/article")
     ls1 = driver.find_elements(By.XPATH,"//p")
     ls2 = driver.find_elements(By.XPATH,"//div[@class='left-sec']//div//div[3]//article/div[2]/div/div[1]/div/span[1]")
     ls3 = driver.find_elements(By.XPATH,"//div[@class='left-sec']//div//div[3]//article/div[2]/div/div[1]/ul/li[1]")
     ls4 = driver.find_elements(By.XPATH,"//div[@class='left-sec']//div//div[3]//article/div[2]/div/div[1]/ul/li[3]")
-
-    j_id = [ls[i].get_attribute('data-job-id') for i in range(len(ls))][:-1]
-    j_id1 = [ls1[i].text for i in range(len(ls1))][:-1]
-    j_id2 = [ls2[i].text for i in range(len(ls2))]
-    j_id3 = [ls3[i].text for i in range(len(ls3))]
-    j_id4 = [ls4[i].text for i in range(len(ls4))]
+    
+    j_id = []
+    j_id1 = []
+    j_id2 = []
+    j_id3 = []
+    j_id4 = []
+    
+    for i in range(len(ls1)):
+        if (any(item.lower() in ls1[i].text.lower() for item in keyword_title) or any(item in ls1[i].text for item in keyword_title2)) and not any(item.lower() in ls1[i].text.lower() for item in not_keywords):
+            j_id.append(ls[i].get_attribute('data-job-id'))
+            j_id1.append(ls1[i].text)
+            j_id2.append(ls2[i].text)
+            j_id3.append(ls3[i].text)
+            j_id4.append(ls4[i].text)
 
     driver.close()
-
+    
     df = pd.DataFrame({'job_id':j_id,'job_title':j_id1,'company':j_id2,'experience':j_id3,'location':j_id4})
-
+    
     def make_url(job_title,company,exe,loc,job_id):
         
         job_title = re.sub(r'[-_()|/, .&+!:;]+', '-', job_title.lower())
@@ -74,8 +86,7 @@ def extract_recommended_links(user,password):
 
     return df['url'].values
 
-
-def auto_apply(user_first ,password_first, user_second, password_second):
+def auto_apply(user_first, password_first, user_second, password_second):
     
     driver = webdriver.Chrome()
     driver.get(main_url)
@@ -133,16 +144,6 @@ def auto_apply(user_first ,password_first, user_second, password_second):
     save_path = os.path.join(path,filename)
     not_possible_df.to_csv(save_path,index=False)
     er_df.to_csv(r"C:\Users\Aditya\Desktop\Naukri\Auto Recommend\error1.csv",index=False)
-
-
-user1 = 'a.mulay9501@gmail.com'
-password1 = 'Aditya@2201'
-
-user2 = 'adi221800@gmail.com'
-password2 = '5zJV!&zCSw6pGdA'
-
-print(auto_apply(user_first=user2,password_first=password2, user_second=user2,password_second=password2))
-
 
 def get_job_without_login(jobdesgn,yrsexp,fresh):
     driver = webdriver.Chrome()
@@ -247,6 +248,3 @@ def search_apply(userid,secure,jobdesgn,yrsexp,fresh):
             try_something.append(joburl)
     print(len(try_something))
     return try_something
-    
-# print(search_apply(user2,password2,'Machine Learning',4,'recent'))
-            
